@@ -1,4 +1,6 @@
-# Hazel
+# Hazel for Tauri
+
+> This is a fork from [lemarier/tauri-update-server](https://github.com/lemarier/tauri-update-server) and [vercel/hazel](https://github.com/vercel/hazel).
 
 [![CircleCI](https://circleci.com/gh/vercel/hazel/tree/master.svg?style=svg)](https://circleci.com/gh/vercel/hazel/tree/master)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
@@ -21,16 +23,19 @@ Open this link in a new tab to deploy Hazel on [Vercel](https://vercel.com):
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FHuakunShen%2Ftauri-update-server&env=ACCOUNT%2CREPOSITORY&envDescription=Enter%20your%20GitHub%20user%2Forg%20slug%20and%20the%20name%20of%20the%20repository%20that%20contains%20your%25Tauri%20app.&envLink=https%3A%2F%2Fgithub.com%2Fvercel%2Fhazel#usage&repo-name=tauri-update-server)
 
-Once it's deployed, paste the deployment address into your code (please keep in mind that updates should only occur in the production version of the app, not while developing):
+Once deployed, Tauri app will automatically work given that the configuration file is set properly. See [Updater Docs](https://tauri.app/v1/guides/distribution/updater/).
 
-```js
-const { app, autoUpdater } = require('electron')
-
-const server = <your-deployment-url>
-const url = `${server}/update/${process.platform}/${app.getVersion()}`
-
-autoUpdater.setFeedURL({ url })
+```json
+"updater": {
+    "active": true,
+    "endpoints": [
+        "https://releases.myapp.com/update{{target}}/{{current_version}}"
+    ],
+    "dialog": true,
+    "pubkey": "YOUR_UPDATER_SIGNATURE_PUBKEY_HERE"
+}
 ```
+
 
 That's it! :white_check_mark:
 
@@ -78,24 +83,6 @@ If the latest version of the application wasn't yet pulled from [GitHub Releases
 This endpoint was specifically crafted for the Windows platform (called "win32" [in Node.js](https://nodejs.org/api/process.html#process_process_platform)).
 
 Since the [Windows version](https://github.com/Squirrel/Squirrel.Windows) of Squirrel (the software that powers auto updates inside [Electron](https://www.electronjs.org)) requires access to a file named "RELEASES" when checking for updates, this endpoint will respond with a cached version of the file that contains a download link to a `.nupkg` file (the application update).
-
-## Programmatic Usage
-
-You can add Hazel to an existing HTTP server, if you want. For example, this will allow you to implement custom analytics on certain paths.
-
-```js
-const tauri_updater = require('tauri-update-server')
-
-http.createServer((req, res) => {
-  tauri_updater(req, res)
-})
-```
-
-## Contributing
-
-1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
-2. Move into the directory of your clone: `cd hazel`
-3. Install [Vercel CLI](https://vercel.com/cli) and run the development server: `vercel dev`
 
 ## Credits
 
